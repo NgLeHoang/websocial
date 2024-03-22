@@ -22,8 +22,43 @@
         }
         return false;
     }
+
+
+    // Filter Data from method get and post
+    function filterData() {
+        $filter_array = [];
+        if (isGet()) {
+            if (!empty($_GET)) {
+                foreach ($_GET as $key => $value) {
+                    $key = strip_tags($key);
+
+                    if (is_array($value)) {
+                        $filter_array[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+                    } else {
+                        $filter_array[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                    }
+                }
+            }
+        }
+
+        if (isPost()) {
+            if (!empty($_POST)) {
+                foreach ($_POST as $key => $value) {
+                    $key = strip_tags($key);
+
+                    if (is_array($value)) {
+                        $filter_array[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+                    } else {
+                        $filter_array[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                    }
+                }
+            }
+        }
+
+        return $filter_array;
+    }
     
-     //Alert message
+    //Alert message
      function alertMsg($msg, $type='success') {
         echo '<div class="alert alert-'.$type.'">';
         echo $msg;
@@ -194,8 +229,10 @@
     
         return $errors; 
     }
-
+    
+    // Create user from signup form
     function createUser($form_data) {
+        $activeToken = sha1(uniqid().time());
         $dataInsert = [
             'first_name' => $form_data['first_name'],
             'last_name' => $form_data['last_name'],
@@ -203,6 +240,7 @@
             'email' =>  $form_data['email'],
             'username' => $form_data['username'],
             'password' => password_hash($form_data['password'], PASSWORD_DEFAULT),
+            'activeToken' => $activeToken,
             'created_at' => date('Y-m-d H:i:s')
         ];
 
@@ -213,6 +251,74 @@
         }
 
         return false;
+    }
+
+    // Check user in database
+    function checkUser($login_data) {
+        if (!empty($login_data['username_email']) && !empty($login_data['password'])) {
+            $username_email = $login_data['username_email'];
+            $password = $login_data['password'];
+
+            $userQuery = getOneRaw("SELECT password, id FROM users WHERE email = '$username_email' || username = '$username_email'");
+
+            if (!empty($userQuery)) {
+                $passwordHash = $userQuery['password'];
+                $userId = $userQuery['id'];
+                if (password_verify($password, $passwordHash)) {
+
+                    // Check account is login
+                    $userLogin = getRows("SELECT * FROM logintoken WHERE user_Id = $userId");
+                    if ($userLogin > 0) {
+                        setFlashData('msg', 'Account is login another page.');
+                        setFlashData('msg_type', 'danger');
+                        redirect('?module=auth&action=signin');
+                    } else {
+                        // Create token login
+                        $tokenLogin = sha1(uniqid().time());
+
+                        $dataInsert = [
+                            'user_Id' => $userId,
+                            'token' => $tokenLogin,
+                            'create_at' => date('Y-m-d H:i:s')
+                        ];
+
+                        $insertQuery = insert('logintoken', $dataInsert);
+                        if ($insertQuery) {
+                            setSession('logintoken', $tokenLogin);
+                            redirect('?module=home&action=dashboard');
+                        } else {
+                            setFlashData('msg', 'Can not login, please try again later');
+                            setFlashData('msg_type', 'danger');
+                        }
+                    }
+                } else {
+                    setFlashData('msg', 'Password is wrong, please reinput.');
+                    setFlashData('msg_type', 'danger');
+                }
+            } else {
+                setFlashData('msg', 'Username/email not exist.');
+                setFlashData('msg_type', 'danger');
+            }
+        } else {
+            setFlashData('msg', 'Please input email and password.');
+            setFlashData('msg_type', 'danger');
+        }
+        redirect('?module=auth&action=signin');
+    }
+
+    // Validate signin form
+    function validateSigninForm($form_data) {
+        $errors = [];
+
+        if (empty($form_data['username_email'])) {
+            $errors['username']['required'] = 'Username/email is required input.';
+        }
+    
+        if (empty($form_data['password'])) {
+            $errors['password']['required'] = 'Password is required input.';
+        }
+    
+        return $errors; 
     }
    
     

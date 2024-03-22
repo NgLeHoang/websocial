@@ -8,6 +8,3 @@
     <link rel="stylesheet" href="<?php echo _WEB_HOST_ASSETS; ?>/css/main.css?ver=<?php echo rand();?>">
 </head>
 <body>
-    
-</body>
-</html>

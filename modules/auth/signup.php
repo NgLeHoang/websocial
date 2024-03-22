@@ -1,14 +1,12 @@
 <?php
-    layouts('header');
-    
+    layouts('header', $data = ['pageTitle' => 'Sign up']);
+
     if (isPost()) {
         $errors = validateSignupForm($_POST);
         if (empty($errors)) {
             $createUser = createUser($_POST);
             if ($createUser) {
-                setFlashData('msg', 'Registed success!');
-                setFlashData('msg_type', 'success');
-                redirect('?module=auth&action=signup');
+                redirect('?module=auth&action=signin');
             }
         } else {
             setFlashData('msg', 'Registerd failed!');
