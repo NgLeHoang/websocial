@@ -18,6 +18,8 @@
     
                     $updateQuery = update('users', $dataUpdate, "id = $userId");
                     if ($updateQuery) {
+                        removeSession('code');
+                        removeSession('email');
                         redirect('?module=home&action=dashboard');
                     } else {
                         setFlashData('msg', 'System har error, please try again later!');

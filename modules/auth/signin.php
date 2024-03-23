@@ -41,7 +41,7 @@
 
 
             </div>
-            <a href="#" class="text-decoration-none">Forgot password ?</a>
+            <a href="?module=auth&action=forgot" class="text-decoration-none mt-2 d-block">Forgot password ?</a>
         </form>
     </div>
 </div>

@@ -95,10 +95,9 @@
 
                 <div class="mt-3 d-flex justify-content-between align-items-center">
                     <button class="btn btn-primary" type="submit">Sign Up</button>
-                    <a href="?module=auth&action=login" class="text-decoration-none">Already have an account ?</a>
-
+                    <a href="?module=auth&action=signin" class="text-decoration-none">Already have an account ?</a>
                 </div>
-
+                <a href="?module=auth&action=forgot" class="text-decoration-none mt-2 d-block">Forgot password ?</a>
             </form>
         </div>
     </div>

@@ -283,7 +283,6 @@
     
     // Create user from signup form
     function createUser($form_data) {
-        $activeToken = sha1(uniqid().time());
         $dataInsert = [
             'first_name' => $form_data['first_name'],
             'last_name' => $form_data['last_name'],
@@ -291,7 +290,6 @@
             'email' =>  $form_data['email'],
             'username' => $form_data['username'],
             'password' => password_hash($form_data['password'], PASSWORD_DEFAULT),
-            'activeToken' => $activeToken,
             'created_at' => date('Y-m-d H:i:s')
         ];
 
@@ -310,11 +308,12 @@
             $username_email = $login_data['username_email'];
             $password = $login_data['password'];
 
-            $userQuery = getOneRaw("SELECT password, id FROM users WHERE email = '$username_email' || username = '$username_email'");
+            $userQuery = getOneRaw("SELECT password, id, status FROM users WHERE email = '$username_email' || username = '$username_email'");
 
             if (!empty($userQuery)) {
                 $passwordHash = $userQuery['password'];
                 $userId = $userQuery['id'];
+                $status = $userQuery['status'];
                 if (password_verify($password, $passwordHash)) {
 
                     // Check account is login
@@ -324,22 +323,30 @@
                         setFlashData('msg_type', 'danger');
                         redirect('?module=auth&action=signin');
                     } else {
-                        // Create token login
-                        $tokenLogin = sha1(uniqid().time());
-
-                        $dataInsert = [
-                            'user_Id' => $userId,
-                            'token' => $tokenLogin,
-                            'create_at' => date('Y-m-d H:i:s')
-                        ];
-
-                        $insertQuery = insert('logintoken', $dataInsert);
-                        if ($insertQuery) {
-                            setSession('logintoken', $tokenLogin);
-                            redirect('?module=home&action=dashboard');
-                        } else {
-                            setFlashData('msg', 'Can not login, please try again later');
+                        // Check status
+                        if ($status == 0) {
+                            setFlashData('msg', 'Account not active, please verify!');
                             setFlashData('msg_type', 'danger');
+                        } else if ($status == 2) {
+                            redirect('?module=auth&action=blocked');
+                        } else {
+                            // Create token login
+                            $tokenLogin = sha1(uniqid().time());
+
+                            $dataInsert = [
+                                'user_Id' => $userId,
+                                'token' => $tokenLogin,
+                                'create_at' => date('Y-m-d H:i:s')
+                            ];
+
+                            $insertQuery = insert('logintoken', $dataInsert);
+                            if ($insertQuery) {
+                                setSession('logintoken', $tokenLogin);
+                                redirect('?module=home&action=dashboard');
+                            } else {
+                                setFlashData('msg', 'Can not login, please try again later');
+                                setFlashData('msg_type', 'danger');
+                            }
                         }
                     }
                 } else {
@@ -388,4 +395,18 @@
         }
 
         return $checkLogin;
+    }
+
+    function resetPassword($email, $password) {
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $dataUpdate = [
+            'password' => $passwordHash,
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+        $updateQuery = update('users', $dataUpdate, "email = '$email'");
+        if ($updateQuery) {
+            return true;
+        }
+
+        return false;
     }
