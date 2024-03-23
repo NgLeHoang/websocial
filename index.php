@@ -3,6 +3,11 @@
     session_start();
     require_once "config.php";
 
+    // PHPMailer Library
+    require_once './data/phpmailer/Exception.php';
+    require_once './data/phpmailer/PHPMailer.php';
+    require_once './data/phpmailer/SMTP.php';
+
     require_once './data/functions.php';
     require_once './data/sessions.php';
     require_once './data/database.php';

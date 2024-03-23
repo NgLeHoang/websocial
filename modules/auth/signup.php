@@ -5,8 +5,15 @@
         $errors = validateSignupForm($_POST);
         if (empty($errors)) {
             $createUser = createUser($_POST);
+            
+            // Send code
+            $code = '';
+            $_SESSION['code'] = $code = rand(111111,999999);
+            $_SESSION['email'] = $_POST['email'];
+            sendMail($_POST['email'], 'Verify Your Email', $code);
+
             if ($createUser) {
-                redirect('?module=auth&action=signin');
+                redirect('?module=auth&action=verifyemail');
             }
         } else {
             setFlashData('msg', 'Registerd failed!');
