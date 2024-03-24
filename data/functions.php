@@ -242,6 +242,17 @@
         return false;
     }
 
+    //Checking duplicated username by update profile 
+    function isUsernameRegistedByOther($username) {
+        $userId = $_SESSION['userdata']['id'];
+        $query = "SELECT * FROM users WHERE username = '$username' && id != $userId";
+        if (getRows($query) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     // Validate form signup
     function validateSignupForm($form_data) {
         $errors = [];
@@ -308,9 +319,10 @@
             $username_email = $login_data['username_email'];
             $password = $login_data['password'];
 
-            $userQuery = getOneRaw("SELECT password, id, status FROM users WHERE email = '$username_email' || username = '$username_email'");
-
+            $userQuery = getOneRaw("SELECT * FROM users WHERE email = '$username_email' || username = '$username_email'");
+            
             if (!empty($userQuery)) {
+                $_SESSION['userdata'] = $userQuery;
                 $passwordHash = $userQuery['password'];
                 $userId = $userQuery['id'];
                 $status = $userQuery['status'];
@@ -404,6 +416,81 @@
             'updated_at' => date('Y-m-d H:i:s')
         ];
         $updateQuery = update('users', $dataUpdate, "email = '$email'");
+        if ($updateQuery) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // Validate update form profile
+    function validateUpdateProfile($form_data, $image_data) {
+        $errors = [];
+
+        if (empty($form_data['first_name'])) {
+            $errors['first_name']['required'] = 'First name is required input.';
+        }
+
+        if (empty($form_data['last_name'])) {
+            $errors['last_name']['required'] = 'Last name is required input.';
+        }
+
+        if (empty($form_data['username'])) {
+            $errors['username']['required'] = 'Username is required input.';
+        } else {
+            if (isUsernameRegistedByOther($form_data['username'])) {
+                $errors['username']['exist'] = $form_data['username']. ' is already registered.';
+            }
+        }
+    
+        if (!empty($form_data['password'])) {
+            if (strlen($form_data['password']) < 8) {
+                $errors['password']['min_length'] = 'Password must have at least 8 characters.';
+            }
+        }
+
+        if ($image_data['name']) {
+            $image = basename($image_data['name']);
+            $type = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+            $size = $image_data['size']/1000;
+
+            if ($type != 'jpg' && $type != 'jpeg' && $type != 'png') {
+                $errors['profile_pic']['required'] = 'Only jpg, jpeg, png are allowed.';
+            }
+        }
+
+        if ($size > 1000) {
+            $errors['profile_pic']['sizemax'] = 'Upload image less then 1 mb';
+        }
+    
+        return $errors; 
+    }
+
+    function updateProfile($form_data, $image_data) {
+        $dataUpdate = [
+            'first_name' => $form_data['first_name'],
+            'last_name' => $form_data['last_name'],
+            'username' => $form_data['username'],
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+
+        if (!empty($form_data['password'])) {
+            $dataUpdate['password'] = password_hash($form_data['password'], PASSWORD_DEFAULT);
+        }
+
+        $profile_pic = "";
+        if ($image_data['name']) {
+            $image_name = time().basename($image_data['name']);
+            $image_dir = "assets/img/profile/$image_name";
+            move_uploaded_file($image_data['tmp_name'], $image_dir);
+
+            $profile_pic = $image_name;
+            $dataUpdate['profile_pic'] = $profile_pic;
+        }
+
+        $userId = $_SESSION['userdata']['id'];
+        $condition = "id = $userId";
+        $updateQuery = update('users', $dataUpdate, $condition);
         if ($updateQuery) {
             return true;
         }

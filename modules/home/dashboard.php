@@ -5,6 +5,7 @@
         redirect('?module=auth&action=signin');
     }
 
+    $userData = $_SESSION['userdata'];
     require_once "modules/home/navbar.php";
 ?>
 
@@ -14,8 +15,8 @@
             <div class="card-title d-flex justify-content-between  align-items-center">
 
                 <div class="d-flex align-items-center p-2">
-                    <img src="assets/img/avatar.jpg" width="30" alt="" height="30" class="rounded-circle border">&nbsp;&nbsp;Monu
-                    Giri
+                    <img src="assets/img/profile/<?=$userData['profile_pic']; ?>" width="30" alt="" height="30" class="rounded-circle border">&nbsp;&nbsp;
+                    <?=$userData['first_name']; ?> <?=$userData['last_name']; ?> 
                 </div>
                 <div class="p-2">
                     <i class="bi bi-three-dots-vertical"></i>
@@ -165,12 +166,12 @@
 
     <div class="col-4 mt-4 p-3">
         <div class="d-flex align-items-center p-2">
-            <div><img src="assets/img/avatar.jpg" width="60" alt="" height="60" class="rounded-circle border">
+            <div><img src="assets/img/profile/<?=$userData['profile_pic']; ?>" width="60" alt="" height="60" class="rounded-circle border">
             </div>
             <div>&nbsp;&nbsp;&nbsp;</div>
             <div class="d-flex flex-column justify-content-center align-items-center">
-                <h6 style="margin: 0px;">Monu Giri</h6>
-                <p style="margin:0px;" class="text-muted">@oyeitsmg</p>
+                <h6 style="margin: 0px;"><?=$userData['first_name']; ?> <?=$userData['last_name']; ?></h6>
+                <p style="margin:0px;" class="text-muted">@<?=$userData['username']; ?></p>
             </div>
         </div>
         <div>
