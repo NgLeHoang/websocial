@@ -2,6 +2,7 @@
     layouts('header');
 
     $userData = $_SESSION['userdata'];
+    require_once "modules/action/postmodal.php";
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white border">
@@ -13,6 +14,7 @@
         </div>
         <ul class="navbar-nav">
             <a href="?module=home&action=dashboard" class="nav-link"><i class="fa-solid fa-house"></i></a>
+            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#postmodal"><i class="fa-regular fa-square-plus"></i></a>
         </ul>
         <ul class="navbar-nav  mb-2 mb-lg-0">
             <li class="nav-item dropdown">
@@ -32,3 +34,6 @@
         </ul>
     </div>
 </nav>
+<?php
+    layouts('footer');
+?>

@@ -466,6 +466,7 @@
         return $errors; 
     }
 
+    // Update profile
     function updateProfile($form_data, $image_data) {
         $dataUpdate = [
             'first_name' => $form_data['first_name'],
@@ -493,6 +494,68 @@
         $updateQuery = update('users', $dataUpdate, $condition);
         if ($updateQuery) {
             return true;
+        }
+
+        return false;
+    }
+
+    // Validate add post
+    function validatePostImage($image_data) {
+        $errors = [];
+
+        if ($image_data['name']) {
+            $image = basename($image_data['name']);
+            $type = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+            $size = $image_data['size']/1000;
+
+            if ($type != 'jpg' && $type != 'jpeg' && $type != 'png') {
+                $errors['profile_pic']['required'] = 'Only jpg, jpeg, png are allowed.';
+            }
+        }
+
+        if ($size > 1000) {
+            $errors['profile_pic']['sizemax'] = 'Upload image less then 1 mb';
+        }
+
+        return $errors;
+    }
+
+    // Create new post
+    function createPost($text, $image_data) {
+        $userId = $_SESSION['userdata']['id'];
+        $dataInsert = [
+            'user_Id' => $userId,
+            'post_text' => $text,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        $post_img = "";
+        if ($image_data['name']) {
+            $image_name = time().basename($image_data['name']);
+            $image_dir = "assets/img/post/$image_name";
+            move_uploaded_file($image_data['tmp_name'], $image_dir);
+
+            $post_img = $image_name;
+            $dataInsert['post_img'] = $post_img;
+        }
+
+        $insertQuery = insert('posts', $dataInsert);
+        if ($insertQuery) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    // Get post
+    function getPost() {
+        $query = "SELECT posts.id, posts.user_Id, posts.post_img, posts.post_text, posts.created_at, 
+        users.first_name, users.last_name, users.username, users.profile_pic FROM posts JOIN users ON
+        users.id=posts.user_Id ORDER BY id DESC";
+        $getData = getRaw($query);       
+
+        if ($getData) {
+            return $getData;
         }
 
         return false;
