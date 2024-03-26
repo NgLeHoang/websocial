@@ -23,8 +23,8 @@
                     <img src="assets/img/profile/<?=$userData['profile_pic']; ?>" alt="" width="30" height="30" class="rounded-circle border">
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="?module=users&action=editprofile">My Profile</a></li>
-                    <li><a class="dropdown-item" href="#">Account Settings</a></li>
+                    <li><a class="dropdown-item" href="?module=users&action=profile&name=<?=$userData['username']?>">My Profile</a></li>
+                    <li><a class="dropdown-item" href="?module=users&action=editprofile">Account Settings</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>

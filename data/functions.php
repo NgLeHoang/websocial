@@ -560,3 +560,133 @@
 
         return false;
     }
+
+    // Get post by id
+    function getPostById($userId) {
+        $query = "SELECT * FROM posts WHERE user_Id = $userId ORDER BY id DESC";
+        $getData = getRaw($query);       
+
+        if ($getData) {
+            return $getData;
+        }
+
+        return false;
+    }
+
+    function getUserByUsername($username) {
+        $query = "SELECT * FROM users WHERE username = '$username'";
+        $getData = getOneRaw($query);
+
+        if ($getData) {
+            return $getData;
+        }
+
+        return false;
+    }
+
+    // Check the user is followed by current user or not
+    function checkFollowStatus($userId) {
+        $current_user = $_SESSION['userdata']['id'];
+        $query = "SELECT count(*) as row FROM followlist WHERE follower_id = $current_user && user_Id = $userId";
+        $getData = getOneRaw($query);
+
+        if ($getData) {
+            return $getData['row'];
+        }
+
+        return false;
+    }
+
+    // Get user for suggestion accounts
+    function getUserFollowSuggestion() {
+        $current_user = $_SESSION['userdata']['id'];
+        $query = "SELECT * FROM users WHERE id!=$current_user LIMIT 8";
+        $getData = getRaw($query);       
+
+        if ($getData) {
+            return $getData;
+        }
+
+        return false;
+    } 
+
+    // Filtering the suggestion list
+    function filterFollowSuggestion() {
+        $list_user = getUserFollowSuggestion();
+        $filter_list = [];
+        foreach ($list_user as $user) {
+            if (!checkFollowStatus($user['id']) && count($filter_list) < 6) {
+                $filter_list[] = $user;
+            }
+        }
+
+        return $filter_list;
+    }
+
+    // Follow user 
+    function followUser($userId) {
+        $current_user = $_SESSION['userdata']['id'];
+        $dataInsert = [
+            'follower_id' => $current_user,
+            'user_Id' => $userId
+        ];
+
+        $insertQuery = insert('followlist', $dataInsert);
+
+        if ($insertQuery) {
+            return true;
+        }
+
+        return false;
+    } 
+
+    // Unfollow user 
+    function unfollowUser($userId) {
+        $current_user = $_SESSION['userdata']['id'];
+
+        $condition = "follower_id = $current_user && user_Id = $userId";
+        $deleteUser = delete('followlist', $condition);
+
+        if ($deleteUser) {
+            return true;
+        }
+
+        return false;
+    } 
+
+    // Get follower number
+    function getFollower($userId) {
+        $query = "SELECT * FROM followlist WHERE user_Id = $userId";
+        $getData = getRaw($query);
+
+        if ($getData) {
+            return $getData;
+        }
+
+        return false;
+    }
+
+    // Get following number
+    function getFollowing($userId) {
+        $query = "SELECT * FROM followlist WHERE follower_id = $userId";
+        $getData = getRaw($query);
+
+        if ($getData) {
+            return $getData;
+        }
+
+        return false;
+    }
+
+    // Filtering the post on dashboard
+    function filterHomePost() {
+        $list_post = getPost();
+        $filter_list = [];
+        foreach ($list_post as $post) {
+            if (checkFollowStatus($post['user_Id']) || $post['user_Id'] == $_SESSION['userdata']['id']) {
+                $filter_list[] = $post;
+            }
+        }
+
+        return $filter_list;
+    }
