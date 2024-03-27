@@ -33,6 +33,7 @@
     }
     else { 
         foreach ($postData as $post) {
+            $count_likes = countLikePost($post['id']);
             ?>
             <div class="card mt-4">
                 <div class="card-title d-flex justify-content-between  align-items-center">
@@ -52,18 +53,42 @@
                         ?>
                             <img src="assets/img/post/<?=$post['post_img']; ?>" class="" alt="...">
                             <h4 style="font-size: x-larger" class="p-2 border-bottom">
-                                <i class="bi bi-heart"></i>
+                            <span>
+                            <?php
+                                if (checkLikeStatus($post['id'])) {
+                                    $like_btn_display = 'none';
+                                    $unlike_btn_display = '';
+                                } else {
+                                    $like_btn_display = '';
+                                    $unlike_btn_display = 'none';
+                                }
+                            ?>
+                            <i class="fa-solid fa-heart unlike-btn" style="display:<?=$unlike_btn_display?>" data-post-id="<?=$post['id']?>"></i>
+                            <i class="fa-regular fa-heart like-btn" style="display:<?=$like_btn_display?>" data-post-id="<?=$post['id']?>"></i>
+                            </span>
                                 &nbsp;&nbsp;
-                                <i class="bi bi-chat-left"></i>
+                                <i class="fa-regular fa-comment"></i>
                             </h4>
+                            <span class="p-1 mx-3" data-bs-toggle="modal" data-bs-target="#likes<?=$post['id']?>"><?php is_array($count_likes) ? $count = count($count_likes) : $count = 0; echo $count; ?> likes</span>
                         <?php
                     }
                 ?>
-                
+                <?php require "modules/action/userlikemodal.php"; ?>
                 <div class="card-body">
                     <p><?=$post['post_text']; ?></p>
                     <p>Posted at: <?=$post['created_at']; ?></p>
                 </div>
+                <?php
+                    if (!$post['post_img']) {
+                        ?>
+                            <h4 style="font-size: x-larger" class="p-2 border-bottom">
+                                <i class="fa-regular fa-heart like-btn" data-user-id="<?=$userData['id']?>" data-post-id="<?=$post['id']?>"></i>
+                                &nbsp;&nbsp;
+                                <i class="fa-regular fa-comment"></i>
+                            </h4>
+                        <?php
+                    }
+                ?>
 
                 <div class="input-group p-2 border-top">
                     <input type="text" class="form-control rounded-0 border-0" placeholder="say something.."

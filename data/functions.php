@@ -201,12 +201,14 @@
 
     function getRaw($sql) {
         $result = query($sql, '', true);
+    
         if (is_object($result)) {
             $dataFetch = $result -> fetchAll(PDO::FETCH_ASSOC);
         }
+        
         return $dataFetch;
     }
-
+    
     function getOneRaw($sql) {
         $result = query($sql, '', true);
         if (is_object($result)) {
@@ -573,6 +575,18 @@
         return false;
     }
 
+    //Get user
+    function getUser($userId) {
+        $query = "SELECT * FROM users WHERE id = $userId";
+        $getData = getOneRaw($query);
+
+        if ($getData) {
+            return $getData;
+        }
+
+        return false;
+    }
+
     function getUserByUsername($username) {
         $query = "SELECT * FROM users WHERE username = '$username'";
         $getData = getOneRaw($query);
@@ -615,7 +629,7 @@
         $list_user = getUserFollowSuggestion();
         $filter_list = [];
         foreach ($list_user as $user) {
-            if (!checkFollowStatus($user['id']) && count($filter_list) < 6) {
+            if (!checkFollowStatus($user['id']) && count($filter_list) < 5) {
                 $filter_list[] = $user;
             }
         }
@@ -689,4 +703,59 @@
         }
 
         return $filter_list;
+    }
+
+    // Like post
+    function likePost($postId) {
+        $current_user = $_SESSION['userdata']['id'];
+        $dataInsert = [
+            'user_Id' => $current_user,
+            'post_Id' => $postId
+        ];
+
+        $insertQuery = insert('likes', $dataInsert);
+        if ($insertQuery) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // Unlike post
+    function unlikePost($postId) {
+        $current_user = $_SESSION['userdata']['id'];
+
+        $condition = "user_Id = $current_user && post_Id = $postId";
+        $deleteLike = delete('likes', $condition);
+        
+        if ($deleteLike) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // Check the post is like by current user or not
+    function checkLikeStatus($postId) {
+        $current_user = $_SESSION['userdata']['id'];
+        $query = "SELECT count(*) as row FROM likes WHERE user_Id = $current_user && post_Id = $postId";
+        $getData = getOneRaw($query);
+
+        if ($getData) {
+            return $getData['row'];
+        }
+
+        return false;
+    }
+
+    // Count like 
+    function countLikePost($postId) {
+        $query = "SELECT * FROM likes WHERE post_Id = $postId";
+        $getData = getRaw($query);
+
+        if ($getData) {
+            return $getData;
+        }
+
+        return false;
     }

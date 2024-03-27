@@ -17,7 +17,9 @@
             redirect('?module=users&action=usernotfound');
         }
     } 
-    
+
+    require_once "modules/action/followermodal.php";
+    require_once "modules/action/followingmodal.php";
 ?>
 
 <div class="container col-9 rounded-0">
@@ -48,8 +50,8 @@
                 <span style="font-size: larger;" class="text-secondary">@<?=$profile['username']?></span>
                 <div class="d-flex gap-2 align-items-center my-3">
                     <a class="btn btn-sm btn-primary"><i class="fa-solid fa-newspaper"></i> <?php is_array($profile_post) ? $count = count($profile_post) : $count = 0; echo $count;?> Posts</a>
-                    <a class="btn btn-sm btn-primary"><i class="fa-solid fa-users"></i> <?php is_array($user_follower) ? $count = count($user_follower) : $count = 0; echo $count;?> Followers</a>
-                    <a class="btn btn-sm btn-primary"><i class="fa-solid fa-user"></i> <?php is_array($user_following) ? $count = count($user_following) : $count = 0; echo $count;?> Following</a>
+                    <a class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#follower_list"><i class="fa-solid fa-users"></i> <?php is_array($user_follower) ? $count = count($user_follower) : $count = 0; echo $count;?> Followers</a>
+                    <a class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#following_list"><i class="fa-solid fa-user"></i> <?php is_array($user_following) ? $count = count($user_following) : $count = 0; echo $count;?> Following</a>
                 </div>
                 <?php
                     if ($userData['id']!=$profile['id']) {

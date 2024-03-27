@@ -23,3 +23,31 @@
 
         echo json_encode($response);
     }
+
+    if (isset($_GET['like'])) {
+        $post_Id = $_POST['post_Id'];
+
+        if (!checkLikeStatus($post_Id)) {
+            if (likePost($post_Id)) {
+                $response['status'] = true;
+            } else {
+                $response['status'] = false;
+            }
+        }
+
+        echo json_encode($response);
+    }
+
+    if (isset($_GET['unlike'])) {
+        $post_Id = $_POST['post_Id'];
+
+        if (checkLikeStatus($post_Id)) {
+            if (unlikePost($post_Id)) {
+                $response['status'] = true;
+            } else {
+                $response['status'] = false;
+            }
+        }
+
+        echo json_encode($response);
+    }

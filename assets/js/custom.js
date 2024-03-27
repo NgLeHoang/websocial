@@ -67,4 +67,56 @@ $(document).ready(function() {
             } 
         });
     });
+
+    $(".like-btn").click(function() {
+        var post_id = $(this).data('postId');
+        var button = this;
+        $(button).attr('disabled', true);
+
+        $.ajax({
+            url: '?module=process&action=ajax&like',
+            method: 'post',
+            dataType: 'json',
+            data: {post_Id: post_id},
+            success: function(response) {
+                if (response.status) {
+                    $(button).attr('disabled', false);
+                    $(button).hide();
+                    $(button).siblings('.unlike-btn').show();
+                    location.reload();
+
+                } else {
+                    $(button).attr('disabled', false);
+
+                    alert('Something is wrong, try again after some minutes...');
+                }
+            } 
+        });
+    });
+
+    $(".unlike-btn").click(function() {
+        var post_id = $(this).data('postId');
+        var button = this;
+        $(button).attr('disabled', true);
+
+        $.ajax({
+            url: '?module=process&action=ajax&unlike',
+            method: 'post',
+            dataType: 'json',
+            data: {post_Id: post_id},
+            success: function(response) {
+                if (response.status) {
+                    $(button).attr('disabled', false);
+                    $(button).hide();
+                    $(button).siblings('.like-btn').show();
+                    location.reload();
+
+                } else {
+                    $(button).attr('disabled', false);
+
+                    alert('Something is wrong, try again after some minutes...');
+                }
+            } 
+        });
+    });
 });
