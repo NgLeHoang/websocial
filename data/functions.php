@@ -759,3 +759,33 @@
 
         return false;
     }
+
+    // Create comment
+    function addComment($post_Id, $comment) {
+        $current_user = $_SESSION['userdata']['id'];
+        $dataInsert = [
+            'user_Id' => $current_user,
+            'post_Id' => $post_Id,
+            'comment' => $comment,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        $insertQuery = insert('comments', $dataInsert);
+        if ($insertQuery) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // Get comments
+    function getComments($post_Id) {
+        $query = "SELECT * FROM comments WHERE post_Id = $post_Id";
+        $getData = getRaw($query);
+
+        if ($getData) {
+            return $getData;
+        }
+
+        return false;
+    }
