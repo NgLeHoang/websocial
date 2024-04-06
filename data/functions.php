@@ -789,3 +789,38 @@
 
         return false;
     }
+
+    // Get notifications
+    function getNotifications() {
+        $current_user_id = $_SESSION['userdata']['id'];
+        $query = "SELECT * FROM notifications WHERE to_user_Id = $current_user_id ORDER BY id DESC";
+
+        $getData = getRaw($query);
+        if ($getData) {
+            return $getData;
+        }
+
+        return false;
+    }
+
+    // Add notification
+    function addNotification($post_Id, $description, $user_Id) {
+        $current_user_id = $_SESSION['userdata']['id'];
+
+        $dataInsert = [
+            'from_user_Id' => $current_user_id,
+            'to_user_Id' => $user_Id,
+            'description' => $description,
+            'post_Id' => $post_Id,
+            'read_status' => 0
+        ];
+
+        $insertQuery = insert('notifications', $dataInsert);
+
+        if ($insertQuery) {
+            return true;
+        }
+
+        return false;
+    }
+    

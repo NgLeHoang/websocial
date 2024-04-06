@@ -48,7 +48,7 @@
                     <div class="input-group p-2 border-top">
                         <input type="text" class="form-control rounded-0 border-0 comment-input" placeholder="say something.."
                             aria-label="Recipient's username" aria-describedby="button-addon2">
-                        <button class="btn btn-outline-primary rounded-0 border-0 add-comment" data-cs="comment-section<?=$post['id']?>" data-post-id="<?=$post['id']?>" type="button"
+                        <button class="btn btn-outline-primary rounded-0 border-0 add-comment" data-cs="comment-section<?=$post['id']?>" data-post-id="<?=$post['id']?>" data-user-id="<?=$post['user_Id']?>" type="button"
                             id="button-addon2">Post</button>
                     </div>
                 </div>
