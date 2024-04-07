@@ -19,7 +19,22 @@ function previewImage() {
     }
 }
 
-// Follower user
+var noti_id_read = 0;
+
+function readNotification(noti_id) {
+    noti_id_read = noti_id;
+    console.log(noti_id_read);
+
+    $.ajax({
+        url: '?module=process&action=ajax&readnotification',
+        method: 'post',
+        dataType: 'json',
+        data: {noti_id: noti_id_read},
+        success: function(response) {
+            console.log(response);
+        }
+    })
+}
 
 $(document).ready(function() {
 
@@ -34,6 +49,10 @@ $(document).ready(function() {
             data: { user_Id: user_id},
             success: function(response) {
                 if (response.status) {
+                    type = "follow";
+                    post_id = null;
+                    addNotification(post_id , user_id, type);
+
                     $(button).attr('disabled', true);
                     $(button).data('userId', 0);
                     $(button).html('Followed <i class="fa-solid fa-circle-check"></i>');
@@ -72,6 +91,7 @@ $(document).ready(function() {
 
     $(".like-btn").click(function() {
         var post_id = $(this).data('postId');
+        var user_id = $(this).data('userId');
         var button = this;
         $(button).attr('disabled', true);
 
@@ -79,9 +99,12 @@ $(document).ready(function() {
             url: '?module=process&action=ajax&like',
             method: 'post',
             dataType: 'json',
-            data: {post_Id: post_id},
+            data: {post_Id: post_id, user_Id: user_id},
             success: function(response) {
                 if (response.status) {
+                    type = "like";
+                    addNotification(post_id, user_id, type);
+
                     $(button).attr('disabled', false);
                     $(button).hide();
                     $(button).siblings('.unlike-btn').show();
@@ -133,6 +156,7 @@ $(document).ready(function() {
         
         var button = this;
         var comment_section = $(this).data('cs');
+        var comment_section_post = $(this).data('csp');
         var comment_in = $(button).siblings('.comment-input').val();
         if (comment_in == '') {
             return 0;
@@ -154,6 +178,9 @@ $(document).ready(function() {
                     $(button).siblings('.comment-input').attr('disabled', false);
                     $(button).siblings('.comment-input').val('');
                     $("#" + comment_section).append(response.comment);
+                    if (response.commentpost) {
+                        $("#" + comment_section_post).append(response.commentpost);
+                    }
                     
                     var commentCountSpan = $('#commentcount' + post_id);
                     var newCommentCount = parseInt(commentCountSpan.text()) + 1;
@@ -170,7 +197,7 @@ $(document).ready(function() {
         });
     });
 
-    function addNotification(post_Id, user_Id, type) {
+    function addNotification(post_Id = '', user_Id, type) {
         $.ajax({
             url: '?module=process&action=ajax&addnotification',
             method: 'post',
@@ -180,6 +207,23 @@ $(document).ready(function() {
                 if (response.status) {
                     console.log(response);
 
+                } else {
+                    alert('Something is wrong, try again after some minutes...');
+                }
+            }
+        });
+    }
+
+    function ReadNoti() {
+
+        $.ajax({
+            url: '?module=process&action=ajax&readnotification',
+            method: 'post',
+            dataType: 'json',
+            data: {$noti_Id: $noti_id_read},
+            success: function(response) {
+                if (response.status) {
+                    console.log(response);
                 } else {
                     alert('Something is wrong, try again after some minutes...');
                 }
@@ -202,4 +246,5 @@ $(document).ready(function() {
     setInterval(() => {
         SyncNotification();
     }, 3000)
+
 });

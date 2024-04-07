@@ -811,9 +811,12 @@
             'from_user_Id' => $current_user_id,
             'to_user_Id' => $user_Id,
             'description' => $description,
-            'post_Id' => $post_Id,
             'read_status' => 0
         ];
+
+        if (!empty($post_Id) && $post_Id != null) {
+            $dataInsert['post_Id'] = $post_Id;
+        }
 
         $insertQuery = insert('notifications', $dataInsert);
 
@@ -824,3 +827,16 @@
         return false;
     }
     
+    function readNotification($noti_Id) {
+        $dataUpdate = [
+            'read_status' => 1
+        ];
+        $condition = "id = $noti_Id";
+        $updateQuery = insert('notifications', $dataUpdate, $condition);
+
+        if ($updateQuery) {
+            return true;
+        }
+
+        return false;
+    }

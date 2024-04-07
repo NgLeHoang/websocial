@@ -90,6 +90,17 @@
                 <p style="margin:0px;" class="text-muted">'.$_POST['comment'].'</p>
             </div>
         </div>';
+            
+            $response['commentpost'] = '<div class="d-flex align-items-center p-2">
+            <div><img src="assets/img/profile/'.$current_user['profile_pic'].'" alt="" width="40" height="40" class="rounded-circle border">
+            </div>
+            <div>&nbsp;&nbsp;&nbsp;</div>
+            <div style="border-radius: 12px; " class="d-flex flex-column justify-content-start align-items-start bg-secondary p-3">
+                <h6 style="margin: 0px;"><a class="text-decoration-none text-light" href="?module=users&action=profile&name='.$current_user['username'].'">@'.$current_user['first_name']. ' ' .$current_user['last_name'].'</a></h6>
+                <p style="margin:0px;" class="text-light">'.$_POST['comment'].'</p>
+            </div>
+        </div>';
+        
         } else {
             $response['status'] = false;
         }
@@ -104,14 +115,16 @@
             $noti_user = getUser($noti['from_user_Id']);
 
             $seen = false;
-            if ($noti['read_status'] == 1 || $noti['from_user_Id'] == $_SESSION['userdata']['id']) {
+            $postexist = false;
+            if ($noti['read_status'] == 1) {
                 $seen = true;
             }
-            $postexist = false;
+            
             if ($noti['post_Id']) {
                 $postexist = true;
             } 
-            $notification_list .= '<div class="d-flex align-items-center justify-content-between border-bottom '.($postexist?'data-bs-toggle="modal" data-bs-targer="#postview'.$noti['post_Id'].'"':'').'">
+            
+            $notification_list .= '<div class="d-flex align-items-center justify-content-between border-bottom" onclick="readNotification('.$noti['id'].')">
                 <div class="d-flex align-items-center p-2">
                     <div><img src="assets/img/profile/'.$noti_user['profile_pic'].'" alt="" width="40" height="40"
                             class="rounded-circle border">
@@ -122,7 +135,7 @@
                             <a class="text-decoration-none text-dark"
                                 href="?module=users&action=profile&name='.$noti_user['username'].'">@'.$noti_user['username'].'</a>
                         </h6>
-                        <p style="margin:0px;" class="text-muted">'.$noti['description'].'</p>
+                        <a class="text-decoration-none text-muted" href="'.($postexist ? '?module=home&action=postview&id='.$noti['post_Id'].'':'#').'"><p style="margin:0px;">'.$noti['description'].'</p></a>
                     </div>
                 </div>
                 <div class="d-flex align-items-center">
@@ -145,9 +158,25 @@
 
         if ($type == "comment") {
             $description = $current_user['first_name'] . ' ' . $current_user['last_name'] . ' has commented on your post.';
-        }        
+        } else if ($type == "like") {
+            $description = $current_user['first_name'] . ' ' . $current_user['last_name'] . ' has liked on your post.';
+        } else if ($type == "follow") {
+            $description = $current_user['first_name'] . ' ' . $current_user['last_name'] . ' has followed you.';
+        }   
 
         if(addNotification($post_Id, $description, $user_Id)) {
+            $response['status'] = true;
+        } else {
+            $response['status'] = false;
+        }
+
+        echo json_encode($response);
+    }
+
+    if (isset($_GET['readnotification'])) {
+        $noti_Id = $_GET['noti_id_read'];
+        if (true) {
+            $response['id'] = $noti_Id;
             $response['status'] = true;
         } else {
             $response['status'] = false;
