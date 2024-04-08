@@ -116,6 +116,7 @@
 
             $seen = false;
             $postexist = false;
+            
             if ($noti['read_status'] == 1) {
                 $seen = true;
             }
@@ -124,10 +125,11 @@
                 $postexist = true;
             } 
             
-            $notification_list .= '<div class="d-flex align-items-center justify-content-between border-bottom" onclick="readNotification('.$noti['id'].')">
+            $notification_list .= '<div class="d-flex align-items-center justify-content-between border-bottom notification_item" onclick="readNotification('.$noti['id'].')">
                 <div class="d-flex align-items-center p-2">
-                    <div><img src="assets/img/profile/'.$noti_user['profile_pic'].'" alt="" width="40" height="40"
-                            class="rounded-circle border">
+                    <div><a class="text-decoration-none text-dark"
+                    href="?module=users&action=profile&name='.$noti_user['username'].'"><img src="assets/img/profile/'.$noti_user['profile_pic'].'" alt="" width="40" height="40"
+                            class="rounded-circle border"></a>
                     </div>
                     <div>&nbsp;&nbsp;&nbsp;</div>
                     <div class="d-flex flex-column justify-content-center">
@@ -145,6 +147,9 @@
         }
 
         $json['notificationlist'] = $notification_list;
+
+        $json['newnotificationcount'] = newNotificationCount();
+
         echo json_encode($json);
     }
 
@@ -174,9 +179,8 @@
     }
 
     if (isset($_GET['readnotification'])) {
-        $noti_Id = $_GET['noti_id_read'];
-        if (true) {
-            $response['id'] = $noti_Id;
+        $noti_Id = $_GET['noti_id'];
+        if (readNotification($noti_Id)) {
             $response['status'] = true;
         } else {
             $response['status'] = false;

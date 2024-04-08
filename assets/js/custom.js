@@ -23,17 +23,6 @@ var noti_id_read = 0;
 
 function readNotification(noti_id) {
     noti_id_read = noti_id;
-    console.log(noti_id_read);
-
-    $.ajax({
-        url: '?module=process&action=ajax&readnotification',
-        method: 'post',
-        dataType: 'json',
-        data: {noti_id: noti_id_read},
-        success: function(response) {
-            console.log(response);
-        }
-    })
 }
 
 $(document).ready(function() {
@@ -214,22 +203,9 @@ $(document).ready(function() {
         });
     }
 
-    function ReadNoti() {
-
-        $.ajax({
-            url: '?module=process&action=ajax&readnotification',
-            method: 'post',
-            dataType: 'json',
-            data: {$noti_Id: $noti_id_read},
-            success: function(response) {
-                if (response.status) {
-                    console.log(response);
-                } else {
-                    alert('Something is wrong, try again after some minutes...');
-                }
-            }
-        });
-    }
+    $("#notification_item").click(function() {
+        
+    })
 
     function SyncNotification() {
         $.ajax({
@@ -237,8 +213,28 @@ $(document).ready(function() {
             method: 'post',
             dataType: 'json',
             success: function (response) {
-                console.log(response);
                 $("#notificationlist").html(response.notificationlist);
+
+                if (response.newnotificationcount == 0) {
+                    $("#noticounter").hide();
+                } else {
+                    $("#noticounter").show();
+                    $("#noticounter").html("<small>"+ response.newnotificationcount +"</small>");
+                }
+
+                $("#notificationlist").find(".notification_item").click(function() {
+                    $.ajax({
+                        url: '?module=process&action=ajax&readnotification&noti_id='+noti_id_read,
+                        method: 'get',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status) {
+                            } else {
+                                alert('Something is wrong, try again after some minutes...');
+                            }
+                        }
+                    });
+                });
             }
         });
     }

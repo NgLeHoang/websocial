@@ -827,15 +827,29 @@
         return false;
     }
     
+    // Read notification
     function readNotification($noti_Id) {
         $dataUpdate = [
             'read_status' => 1
         ];
         $condition = "id = $noti_Id";
-        $updateQuery = insert('notifications', $dataUpdate, $condition);
+        $updateQuery = update('notifications', $dataUpdate, $condition);
 
         if ($updateQuery) {
             return true;
+        }
+
+        return false;
+    }
+
+    // Count notification not read
+    function newNotificationCount() {
+        $current_user_id = $_SESSION['userdata']['id'];
+        $query = "SELECT count(*) as row FROM notifications WHERE to_user_Id = $current_user_id && read_status = 0";
+
+        $getData = getOneRaw($query);
+        if ($getData) {
+            return $getData['row'];
         }
 
         return false;

@@ -15,7 +15,10 @@
         </div>
         <ul class="navbar-nav">
             <a href="?module=home&action=dashboard" class="nav-link"><i class="fa-solid fa-house"></i></a>
-            <a href="#" class="nav-link" data-bs-toggle="offcanvas" data-bs-target="#notification"><i class="fa-solid fa-bell"></i></a>
+            <a href="#" class="nav-link" data-bs-toggle="offcanvas" data-bs-target="#notification">
+                <i class="fa-solid fa-bell"></i>
+                <span class="un-count position-absolute start-10 translate-middle badge p-1 rounded-pill bg-danger" id="noticounter"></span>
+            </a>
             <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#postmodal"><i class="fa-regular fa-square-plus"></i></a>
         </ul>
         <ul class="navbar-nav  mb-2 mb-lg-0">
