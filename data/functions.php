@@ -854,3 +854,14 @@
 
         return false;
     }
+
+    function searchUser($keyword) {
+        $query = "SELECT * FROM users WHERE username LIKE '%$keyword%'";
+
+        $searchData = getRaw($query);
+        if ($searchData) {
+            return $searchData;
+        }
+        
+        return false;
+    }

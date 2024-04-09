@@ -203,10 +203,6 @@ $(document).ready(function() {
         });
     }
 
-    $("#notification_item").click(function() {
-        
-    })
-
     function SyncNotification() {
         $.ajax({
             url: '?module=process&action=ajax&getnotification',
@@ -242,5 +238,54 @@ $(document).ready(function() {
     setInterval(() => {
         SyncNotification();
     }, 3000)
+
+    var searchResults = '';
+    $('#searchInput').on('input', function () {
+        var keyword = $(this).val();
+        if (keyword.length > 0) {
+            $.ajax({
+                url: '?module=process&action=ajax&search',
+                type: 'post',
+                dataType: 'json',
+                data: {keyword: keyword},
+                success: function(response){
+                    searchResults = response.searchlist;
+                    $('#searchResult').html(response.searchlist).show();
+                }
+            });
+        } else {
+            $('#searchResult').hide();
+        }
+    });
+        
+    $('#searchInput').focus(function(){
+        $('#searchResult').show();
+        $('#searchResult').html('<p class="text-muted p-2 m-1">Enter the name to search...</p>');
+        if (searchResults) {
+            $('#searchResult').html(searchResults).show();
+        }
+    });
+
+    $('#searchInput').blur(function(){
+        setTimeout(function() {
+            if (!mouseIsOverResult) {
+                $('#searchResult').hide();
+            }
+        }, 100);
+    });
+
+    var mouseIsOverResult = false;
+
+    $('#searchResult').on('mouseenter', function() {
+        mouseIsOverResult = true;
+    }).on('mouseleave', function() {
+        mouseIsOverResult = false;
+    });
+
+    $('#searchResult').on('mousedown', 'a', function(event){
+        event.preventDefault();
+        var href = $(this).attr('href');
+        window.location.href = href;
+    });
 
 });

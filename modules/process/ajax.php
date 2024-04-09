@@ -188,3 +188,31 @@
 
         echo json_encode($response);
     }
+
+    if (isset($_GET['search'])) {
+        $keyword = $_POST['keyword']; 
+        $searchData = searchUser($keyword);
+        $search_list = '';
+        foreach ($searchData as $user) {
+            $search_list .= '<div class="d-flex align-items-center justify-content-between border-bottom">
+            <div class="d-flex align-items-center p-2">
+                <div><a class="text-decoration-none text-dark"
+                href="?module=users&action=profile&name='.$user['username'].'"><img src="assets/img/profile/'.$user['profile_pic'].'" alt="" width="40" height="40"
+                        class="rounded-circle border"></a>
+                </div>
+                <div>&nbsp;&nbsp;&nbsp;</div>
+                <div class="d-flex flex-column justify-content-center">
+                    <h6 style="margin: 0px;">
+                        <a class="text-decoration-none text-dark"
+                            href="?module=users&action=profile&name='.$user['username'].'">@'.$user['username'].'</a>
+                    </h6>
+                    <p style="margin:0px;">'.$user['first_name'].' '.$user['last_name'].'</p>
+                </div>
+            </div>
+        </div>';
+        }
+
+        $json['searchlist'] = $search_list;
+
+        echo json_encode($json);
+    } 

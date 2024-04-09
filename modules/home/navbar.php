@@ -10,7 +10,8 @@
     <div class="container col-9 d-flex justify-content-between">
         <div class="d-flex justify-content-between col-8">
             <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="looking for someone.." aria-label="Search">
+                <input id="searchInput" class="form-control me-2" type="search" placeholder="looking for someone.." aria-label="Search">
+                <div id="searchResult" class="search-result"></div>
             </form>
         </div>
         <ul class="navbar-nav">
