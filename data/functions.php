@@ -697,7 +697,10 @@
         $list_post = getPost();
         $filter_list = [];
         foreach ($list_post as $post) {
-            if (checkFollowStatus($post['user_Id']) || $post['user_Id'] == $_SESSION['userdata']['id']) {
+            $is_followed = checkFollowStatus($post['user_Id']);
+            $is_own_user = ($post['user_Id'] == $_SESSION['userdata']['id']);
+            
+            if ($is_followed || $is_own_user) {
                 $filter_list[] = $post;
             }
         }
@@ -863,5 +866,49 @@
             return $searchData;
         }
         
+        return false;
+    }
+
+    function blockedUser($blocked_user_Id) {
+        $current_user_id = $_SESSION['userdata']['id'];
+        $dataInsert = [
+            'user_Id' => $current_user_id,
+            'blocked_user_Id' => $blocked_user_Id 
+        ];
+
+        $insertQuery = insert('blockuser', $dataInsert);
+
+        $condition = "follower_id = $current_user_id && user_Id = $blocked_user_Id";
+        $deleteFollower = delete('followlist', $condition);
+
+        if ($insertQuery && $deleteFollower) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    function unblockedUser($blocked_user_Id) {
+        $current_user_id = $_SESSION['userdata']['id'];
+
+        $condition = "user_Id = $current_user_id && blocked_user_Id = $blocked_user_Id";
+        $deleteBlocked = delete('blockuser', $condition);
+
+        if ($deleteBlocked) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function getBlockedUser() {
+        $current_user_id = $_SESSION['userdata']['id'];
+        $query = "SELECT * FROM blockuser WHERE user_Id = $current_user_id";
+
+        $getData = getOneRaw($query);
+        if ($getData) {
+            return $getData;
+        }
+
         return false;
     }

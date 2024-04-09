@@ -288,4 +288,41 @@ $(document).ready(function() {
         window.location.href = href;
     });
 
+    $('.block-btn').click(function () {
+        var blocked_user_Id = $(this).data('blocked-user-id');
+
+        $.ajax({
+            url: '?module=process&action=ajax&block',
+            method: 'post',
+            dataType: 'json',
+            data: {blocked_user_Id: blocked_user_Id},
+            success: function(response) {
+                if (response.status) {
+                    location.reload();
+                } else {
+                    alert('Something is wrong, try again after some minutes...');
+                }
+            }
+        });
+    });
+
+    $('.unblock-btn').click(function () {
+        var blocked_user_Id = $(this).data('userId');
+
+        $.ajax({
+            url: '?module=process&action=ajax&unblock',
+            method: 'post',
+            dataType: 'json',
+            data: {blocked_user_Id: blocked_user_Id},
+            success: function(response) {
+                if (response.status) {
+                    console.log(response);
+                    location.reload();
+                } else {
+                    alert('Something is wrong, try again after some minutes...');
+                }
+            }
+        });
+    });
+
 });

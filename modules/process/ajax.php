@@ -216,3 +216,26 @@
 
         echo json_encode($json);
     } 
+
+    if (isset($_GET['block'])) {
+        $blocked_user_Id = $_POST['blocked_user_Id'];
+
+        if (blockedUser($blocked_user_Id)) {
+            $response['status'] = true;
+        } else {
+            $response['status'] = false;
+        }
+
+        echo json_encode($response);
+    }
+
+    if (isset($_GET['unblock'])) {
+        $blocked_user_Id = $_POST['blocked_user_Id'];
+        if (unblockedUser($blocked_user_Id)) {
+            $response['status'] = true;
+        } else {
+            $response['status'] = false;
+        }
+
+        echo json_encode($response);
+    }
