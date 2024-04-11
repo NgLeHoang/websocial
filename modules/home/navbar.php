@@ -4,6 +4,8 @@
     $userData = $_SESSION['userdata'];
     require_once "modules/action/postmodal.php";
     require "modules/action/notificationmodal.php";
+    require "modules/action/messagemodal.php";
+    require "modules/action/messagechat.php";
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white border">
@@ -16,6 +18,10 @@
         </div>
         <ul class="navbar-nav">
             <a href="?module=home&action=dashboard" class="nav-link"><i class="fa-solid fa-house"></i></a>
+            <a href="#" class="nav-link" data-bs-toggle="offcanvas" data-bs-target="#messages">
+                <i class="fa-solid fa-message"></i>
+                <span class="un-count position-absolute start-10 translate-middle badge p-1 rounded-pill bg-danger" id="msgcounter"></span>
+            </a>
             <a href="#" class="nav-link" data-bs-toggle="offcanvas" data-bs-target="#notification">
                 <i class="fa-solid fa-bell"></i>
                 <span class="un-count position-absolute start-10 translate-middle badge p-1 rounded-pill bg-danger" id="noticounter"></span>

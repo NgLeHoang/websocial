@@ -239,3 +239,78 @@
 
         echo json_encode($response);
     }
+
+    if (isset($_GET['getmessage'])) {
+        $chats = getAllMessages();
+        $chat_list = '';
+        foreach ($chats as $chat) {
+            $chat_user = getUser($chat['user_Id']);
+            $seen = false;
+            if ($chat['message'][0]['read_status'] == 1 || $chat['message'][0]['from_user_Id'] == $_SESSION['userdata']['id']) {
+                $seen = true;
+            }
+            $chat_list .= '<div class="d-flex justify-content-between border-bottom" id="chatlist_item" data-bs-toggle="modal" data-bs-target="#messageinfo" onclick="popchat('.$chat['user_Id'].')">
+            <div class="d-flex align-items-center p-2">
+                <div><img src="assets/img/profile/'.$chat_user['profile_pic'].'" alt="" width="40" height="40"
+                        class="rounded-circle border">
+                </div>
+                <div>&nbsp;&nbsp;&nbsp;</div>
+                <div class="d-flex flex-column justify-content-center">
+                    <a class="text-decoration-none text-dark" href="#">
+                        <h6 style="margin: 0px; font-size: small;">
+                        '.$chat_user['first_name'].' '.$chat_user['last_name'].'
+                        </h6>
+                    </a>
+                        <p style="margin:0px; font-size: small;" class="">'.$chat['message'][0]['message'].'</p>
+                        <p style="font-size: small;" class="timeago text-small" datetime="'.$chat['message'][0]['created_at'].'">'.getTime($chat['message'][0]['created_at']).'</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="p-1 bg-primary rounded-circle '.($seen?'d-none':'').'"></div>
+                </div>
+            </div>';
+        }
+
+        $json['chatlist'] = $chat_list;
+
+        $chatter_id = $_POST['chatter_id'];
+        if (isset($chatter_id) && $chatter_id != 0) {
+            $messages = getMessages($chatter_id);
+            $chatmsg = '';
+            foreach($messages as $message) {
+                if ($message['from_user_Id'] == $_SESSION['userdata']['id']) {
+                    $chat_from_user = 'align-self-end bg-primary text-light';
+                    $chat_to_user = '';
+                } else {
+                    $chat_from_user = '';
+                    $chat_to_user = 'text-muted';
+                }
+
+                $chatmsg .= '<div class="py-2 px-3 border rounded shadow-sm col-8 d-inline-block '.$chat_from_user.'">
+                '.$message['message'].'<br>
+                    <span style="font-size: small" class="'.$chat_to_user.'">'.getTime($message['created_at']).'</span>
+                </div>';
+            }
+
+            $json['chat']['message'] = $chatmsg;
+            $json['chat']['userdata'] = getUser($chatter_id);
+        } else {
+            $json['chat']['message'] = '<div class="spinner-border" role="status">
+            </div>';
+        }
+
+        echo json_encode($json);
+    }
+
+    if (isset($_GET['sendmessage'])) {
+        $user_Id = $_POST['user_Id'];
+        $message = $_POST['message'];
+
+        if (sendMessage($user_Id, $message)) {
+            $response['status'] = true;
+        } else {
+            $response['status'] = false;
+        }
+
+        echo json_encode($response);
+    }

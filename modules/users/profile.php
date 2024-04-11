@@ -34,8 +34,9 @@
 
 <div class="container col-9 rounded-0">
     <div class="col-12 rounded p-4 mt-4 d-flex gap-5">
-        <div class="col-4 d-flex justify-content-end align-items-start"><img src="assets/img/profile/<?=$profile['profile_pic']?>"
-                class="img-thumbnail rounded-circle my-3" style="height:170px; width:170px;" alt="...">
+        <div class="col-4 d-flex justify-content-end align-items-start">
+            <img src="assets/img/profile/<?=$profile['profile_pic']?>"
+                class="img-thumbnail rounded-circle my-3" style="height:170px; width:170px; object-fit: cover;" alt="...">
         </div>
         <div class="col-8">
             <div class="d-flex flex-column">
@@ -48,7 +49,7 @@
                                 <span class="" style="font-size:xx-large" role="button" id="dropdownMenuButton1"
                                     data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-ellipsis-vertical"></i></span>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-comment-dots"></i> Message</a></li>
+                                    <li><a class="dropdown-item" href="#" id="chatlist_item" data-bs-toggle="modal" data-bs-target="#messageinfo" onclick="popchatprofile(<?=$profile['id']?>)"><i class="fa-solid fa-comment-dots"></i> Message</a></li>
                                     <li><button class="dropdown-item block-btn" data-blocked-user-id="<?=$profile['id']?>"><i class="fa-solid fa-circle-xmark"></i> Block</button></li>
                                 </ul>
                             </div>

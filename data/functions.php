@@ -912,3 +912,75 @@
 
         return false;
     }
+
+    // Format time
+    function getTime($date) {
+        return date('H:i - (F jS, Y)', strtotime($date));
+    }
+
+    // Get id with active chat user 
+    function getActiveChatUserIds() {
+        $current_user_id = $_SESSION['userdata']['id'];
+        $query = "SELECT from_user_Id, to_user_Id FROM messages WHERE to_user_Id = $current_user_id || from_user_Id = $current_user_id";
+
+        $getData = getRaw($query);
+        if ($getData) {
+            $ids = [];
+            foreach ($getData as $chat) {
+                if ($chat['from_user_Id'] != $current_user_id && !in_array($chat['from_user_Id'], $ids)) {
+                    $ids[] = $chat['from_user_Id'];
+                }
+
+                if ($chat['to_user_Id'] != $current_user_id && !in_array($chat['to_user_Id'], $ids)) {
+                    $ids[] = $chat['to_user_Id'];
+                }
+            }
+            return $ids;
+        }
+
+        return false;
+    }
+
+    // Get messages
+    function getMessages($user_Id) {
+        $current_user_id = $_SESSION['userdata']['id'];
+        $query = "SELECT * FROM messages WHERE (to_user_Id = $current_user_id && from_user_Id = $user_Id) 
+        || (from_user_Id = $current_user_id && to_user_Id = $user_Id) ORDER BY id DESC";
+        
+        $getData = getRaw($query);
+        if ($getData) {
+            return $getData;
+        }
+
+        return false;
+    }
+
+    // Get all messages
+    function getAllMessages() {
+        $active_chat_ids = getActiveChatUserIds();
+        $conversation = [];
+
+        foreach ($active_chat_ids as $index => $id) {
+            $conversation[$index]['user_Id'] = $id;
+            $conversation[$index]['message'] = getMessages($id); 
+        }
+
+        return $conversation;
+    }
+
+    // Send message
+    function sendMessage($user_Id, $message) {
+        $current_user_id = $_SESSION['userdata']['id'];
+        $dataInsert = [
+            'from_user_Id' => $current_user_id,
+            'to_user_Id' => $user_Id,
+            'message' => $message
+        ];
+
+        $insertQuery = insert('messages', $dataInsert);
+        if ($insertQuery) {
+            return true;
+        }
+
+        return false;
+    }
