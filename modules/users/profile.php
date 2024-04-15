@@ -49,7 +49,7 @@
                                 <span class="" style="font-size:xx-large" role="button" id="dropdownMenuButton1"
                                     data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-ellipsis-vertical"></i></span>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item" href="#" id="chatlist_item" data-bs-toggle="modal" data-bs-target="#messageinfo" onclick="popchatprofile(<?=$profile['id']?>)"><i class="fa-solid fa-comment-dots"></i> Message</a></li>
+                                    <li><a class="dropdown-item" href="#" id="chatlist_item" data-bs-toggle="modal" data-bs-target="#messageinfo" onclick="popchat(<?=$profile['id']?>)"><i class="fa-solid fa-comment-dots"></i> Message</a></li>
                                     <li><button class="dropdown-item block-btn" data-blocked-user-id="<?=$profile['id']?>"><i class="fa-solid fa-circle-xmark"></i> Block</button></li>
                                 </ul>
                             </div>

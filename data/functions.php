@@ -575,6 +575,24 @@
         return false;
     }
 
+    // Delete post
+    function deletePost($user_Id, $post_Id) {
+        $condition = "post_Id = $post_Id";
+        $deleteLiked = delete('likes', $condition);
+        $deleteComment = delete('comments', $condition);
+
+        if ($deleteLiked && $deleteComment) {
+            $conditionPost = "user_Id = $user_Id && id = $post_Id";
+            $deletePost = delete('posts', $conditionPost);
+
+            if ($deletePost) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     //Get user
     function getUser($userId) {
         $query = "SELECT * FROM users WHERE id = $userId";
@@ -918,6 +936,29 @@
         return date('H:i - (F jS, Y)', strtotime($date));
     }
 
+    function getTimeOnPost($date) {
+        $timestamp = strtotime($date);
+        $current_time = time();
+        $difference = $current_time - $timestamp;
+    
+        if ($difference < 60) {
+            return $difference . "s ago";
+        } elseif ($difference < 3600) {
+            $minutes = floor($difference / 60);
+            return $minutes . "m ago";
+        } elseif ($difference < 86400) {
+            $hours = floor($difference / 3600);
+            return $hours . "h ago";
+        } elseif ($difference < 604800) {
+            $days = floor($difference / 86400);
+            return $days . "d ago";
+        } else {
+            $weeks = floor($difference / 604800);
+            return $weeks . "w ago";
+        }
+    }
+    
+
     // Get id with active chat user 
     function getActiveChatUserIds() {
         $current_user_id = $_SESSION['userdata']['id'];
@@ -979,7 +1020,37 @@
 
         $insertQuery = insert('messages', $dataInsert);
         if ($insertQuery) {
+            readMessageStatus($user_Id);
             return true;
+        }
+
+        return false;
+    }
+
+    // Update read message status
+    function readMessageStatus($user_Id) {
+        $current_user_id = $_SESSION['userdata']['id'];
+        $dataUpdate = [
+            'read_status' => 1
+        ];
+        $condition = "to_user_Id = $current_user_id && from_user_Id = $user_Id";
+
+        $updateQuery = update('messages', $dataUpdate, $condition);
+        if ($updateQuery) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function newMessageCount() {
+        $current_user_id = $_SESSION['userdata']['id'];
+        $query = "SELECT count(*) as row FROM messages WHERE to_user_Id = $current_user_id 
+        && read_status=0";
+        $getData = getOneRaw($query);
+
+        if ($getData) {
+            return $getData['row'];
         }
 
         return false;

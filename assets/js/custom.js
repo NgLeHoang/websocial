@@ -373,6 +373,13 @@ $(document).ready(function() {
                 console.log(chatting_user_id);
                 $("#chatlist").html(response.chatlist);
 
+                if (response.newmessagecount == 0) {
+                    $("#msgcounter").hide();
+                } else {
+                    $("#msgcounter").show();
+                    $("#msgcounter").html("<small>"+ response.newmessagecount +"</small>");
+                }
+
                 if (chatting_user_id != 0) {
                     $("#userchat").html(response.chat.message);
                     $("#chatter_username").html(response.chat.userdata.username);
@@ -380,12 +387,46 @@ $(document).ready(function() {
                     $("#chatter_pic").attr('src', 'assets/img/profile/' + response.chat.userdata.profile_pic);
                     $("#chatter_pic").attr('alt', response.chat.userdata.profile_pic);
                 }
+
+                $("#chatlist").find(".chatlist_item").click(function() {
+                    $.ajax({
+                        url: '?module=process&action=ajax&readmessage&message_id='+chatting_user_id,
+                        method: 'get',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status) {
+                            } else {
+                                alert('Something is wrong, try again after some minutes...');
+                            }
+                        }
+                    });
+                });
             }
         });
     }
 
-    setInterval(() => {
-        syncMessage();
-    }, 3000)
+    // setInterval(() => {
+    //     syncMessage();
+    // }, 3000)
     
+    $(".delete-post").click(function () {
+        user_Id = $(this).data('userId');
+        post_Id = $(this).data('postId');
+
+        $(".delete-post").attr('disabled', true);
+
+        $.ajax({
+            url: '?module=process&action=ajax&deletepost',
+            method: 'post',
+            dataType: 'json',
+            data: {user_Id: user_Id, post_Id: post_Id},
+            success: function(response) {
+                console.log(response);
+                if (response.status) {
+                    $(".delete-post").attr('disabled', false);
+                    location.reload();
+                }
+            }
+        });
+    });
 });

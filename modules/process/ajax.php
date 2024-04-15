@@ -249,7 +249,7 @@
             if ($chat['message'][0]['read_status'] == 1 || $chat['message'][0]['from_user_Id'] == $_SESSION['userdata']['id']) {
                 $seen = true;
             }
-            $chat_list .= '<div class="d-flex justify-content-between border-bottom" id="chatlist_item" data-bs-toggle="modal" data-bs-target="#messageinfo" onclick="popchat('.$chat['user_Id'].')">
+            $chat_list .= '<div class="d-flex justify-content-between border-bottom chatlist_item" data-bs-toggle="modal" data-bs-target="#messageinfo" onclick="popchat('.$chat['user_Id'].')">
             <div class="d-flex align-items-center p-2">
                 <div><img src="assets/img/profile/'.$chat_user['profile_pic'].'" alt="" width="40" height="40"
                         class="rounded-circle border">
@@ -299,6 +299,8 @@
             </div>';
         }
 
+        $json['newmessagecount'] = newMessageCount();
+
         echo json_encode($json);
     }
 
@@ -310,6 +312,32 @@
             $response['status'] = true;
         } else {
             $response['status'] = false;
+        }
+
+        echo json_encode($response);
+    }
+
+    if (isset($_GET['readmessage'])) {
+        $chatting_user_id = $_GET['message_id'];
+        
+        if (readMessageStatus($chatting_user_id)) {
+            $response['status'] = true;
+        } else {
+            $response['status'] = false;
+        }
+    }
+
+    if (isset($_GET['deletepost'])) {
+        $user_Id = $_POST['user_Id'];
+        $post_Id = $_POST['post_Id'];
+        $current_user_id = $_SESSION['userdata']['id'];
+
+        if ($user_Id == $current_user_id) {
+            if (deletePost($user_Id, $post_Id)) {
+                $response['status'] = true;
+            } else {
+                $response['status'] = false;
+            }
         }
 
         echo json_encode($response);

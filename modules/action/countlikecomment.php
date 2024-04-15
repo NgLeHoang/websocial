@@ -8,9 +8,9 @@
             $unlike_btn_display = 'none';
         }
     ?>
-    <i class="fa-solid fa-heart unlike-btn" style="display:<?=$unlike_btn_display?>"
+    <i class="fa-solid fa-heart unlike-btn ms-2" style="display:<?=$unlike_btn_display?>"
         data-post-id="<?=$post['id']?>"></i>
-    <i class="fa-regular fa-heart like-btn" style="display:<?=$like_btn_display?>" data-post-id="<?=$post['id']?>" data-user-id="<?=$post['user_Id']?>"></i>
+    <i class="fa-regular fa-heart like-btn ms-2" style="display:<?=$like_btn_display?>" data-post-id="<?=$post['id']?>" data-user-id="<?=$post['user_Id']?>"></i>
 </span>
 &nbsp;&nbsp;
 <i class="fa-regular fa-comment"></i>

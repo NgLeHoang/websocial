@@ -35,18 +35,27 @@
         foreach ($postData as $post) {
             $count_likes = countLikePost($post['id']);
             $count_comments = getComments($post['id']);
+            $d_none = false;
+            if ($userData['id'] != $post['user_Id']) {
+                $d_none = true;
+            }
             ?>
             <div class="card mt-4">
-                <div class="card-title d-flex justify-content-between  align-items-center">
+                <div class="card-title d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center p-2">
                         <a href="?module=users&action=profile&name=<?=$post['username']?>" class="text-decoration-none text-dark">
                             <img src="assets/img/profile/<?=$post['profile_pic']; ?>" width="30" alt="" height="30"
                                 class="rounded-circle border">&nbsp;&nbsp;
                             <?=$post['first_name']; ?> <?=$post['last_name']; ?>
                         </a>
+                        <a href="?module=home&action=postview&id=<?=$post['id']?>" class="text-decoration-none text-dark p-2">• <?php echo getTimeOnPost($post['created_at']) ?></a>
                     </div>
-                    <div class="p-2">
-                        <i class="bi bi-three-dots-vertical"></i>
+                    <div class="dropdown p-2">
+                        <span role="button" id="dropdownDelete"
+                            data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-ellipsis"></i></span>
+                        <ul class="dropdown-menu <?=$d_none ? 'd-none' : ''?>" aria-labelledby="dropdownDelete">
+                            <li><button class="dropdown-item delete-post" data-user-id="<?=$post['user_Id']?>" data-post-id="<?=$post['id']?>"><i class="fa-solid fa-x"></i> Delete post</button></li>
+                        </ul>
                     </div>
                 </div>
                 <?php
@@ -70,9 +79,9 @@
                     require "modules/action/userlikemodal.php"; 
                     require "modules/action/postviewhomemodal.php";
                 ?>
-                <div class="card-body">
-                    <p><?=$post['post_text']; ?></p>
-                    <a href="?module=home&action=postview&id=<?=$post['id']?>" class="text-decoration-none text-dark"><p>Posted at: <?=$post['created_at']; ?></p></a>
+                <div class="card-body d-flex">
+                    <p style="font-weight: 600;"><?=$post['username']?></p>
+                    <p class="ms-1"><?=$post['post_text']; ?></p>
                 </div>
 
                 <div class="input-group p-2 border-top">
