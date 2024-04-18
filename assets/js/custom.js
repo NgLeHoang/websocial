@@ -247,9 +247,9 @@ $(document).ready(function() {
         });
     }
 
-    // setInterval(() => {
-    //     SyncNotification();
-    // }, 3000)
+    setInterval(() => {
+        SyncNotification();
+    }, 3000)
 
     var searchResults = '';
     $('#searchInput').on('input', function () {
@@ -405,9 +405,9 @@ $(document).ready(function() {
         });
     }
 
-    // setInterval(() => {
-    //     syncMessage();
-    // }, 3000)
+    setInterval(() => {
+        syncMessage();
+    }, 3000)
     
     $(".delete-post").click(function () {
         user_Id = $(this).data('userId');
@@ -429,4 +429,58 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Check status dark mode has save in localStorage
+    var darkModeEnabled = localStorage.getItem('darkModeEnabled');
+
+    if (darkModeEnabled === 'true') {
+        enableDarkMode();
+    }
+
+    $('.darkmode-btn').click(function () {
+        // Toggle dark mode
+        if (darkModeEnabled === 'true') {
+            disableDarkMode();
+            darkModeEnabled = 'false';
+        } else {
+            enableDarkMode();
+            darkModeEnabled = 'true';
+        }
+
+        localStorage.setItem('darkModeEnabled', darkModeEnabled);
+    });
+
+    function enableDarkMode() {
+        $('body').addClass('dark-mode');
+        $('.text-dark').addClass('text-white');
+        $('.card').addClass('background-dark');
+        $('.btn').addClass('background-dark').addClass('text-white');
+        $('.btn-primary').addClass('border-dark');
+        $('.btn-danger').addClass('border-dark');
+        $('.bg-white').addClass('background-dark');
+        $('.dropdown-menu').addClass('background-dark').addClass('text-white');
+        $('.dropdown-item').addClass('text-white');
+        $('.modal-content').addClass('background-dark');
+        $('.offcanvas').addClass('background-dark');
+        $('i').not('.fa-heart').addClass('text-white');
+        $('input').addClass('background-dark-input');
+        $('.darkmode-btn').addClass('active');
+    }
+
+    function disableDarkMode() {
+        $('body').removeClass('dark-mode');
+        $('.text-dark').removeClass('text-white');
+        $('.card').removeClass('background-dark');
+        $('.btn').removeClass('background-dark').removeClass('text-white');
+        $('.btn-primary').removeClass('border-dark');
+        $('.btn-danger').removeClass('border-dark');
+        $('.bg-white').removeClass('background-dark');
+        $('.dropdown-menu').removeClass('background-dark').removeClass('text-white');
+        $('.dropdown-item').removeClass('text-white');
+        $('.modal-content').removeClass('background-dark');
+        $('.offcanvas').removeClass('background-dark');
+        $('i').not('.fa-heart').removeClass('text-white');
+        $('input').removeClass('background-dark-input');
+        $('.darkmode-btn').removeClass('active');
+    }
 });

@@ -61,7 +61,7 @@
                 <?php
                     if ($post['post_img']) {
                         ?>
-                            <img src="assets/img/post/<?=$post['post_img']; ?>" class="" alt="...">
+                            <img style="border-radius: 4px;" src="assets/img/post/<?=$post['post_img']; ?>" class="" alt="...">
                             <h4 style="font-size: x-larger" class="p-2 border-bottom">
                             <?php
                                 require "modules/action/countlikecomment.php";

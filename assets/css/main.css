@@ -29,3 +29,67 @@ body{
     z-index: 999;
     display: none;
 }
+
+.darkmode-btn {
+    position: relative;
+    display: block;
+    width: 32px;
+    height: 16px;
+    border-radius: 16px;
+    background: #222;
+    transition: 0.5s;
+    box-shadow: inset 0 8px 60px rgba(0, 0, 0, 0.1),
+                inset 0 8px 8px rgba(0, 0, 0, 0.1),
+                inset 0 -4px 4px rgba(0, 0, 0, 0.1);
+}
+
+.darkmode-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(to bottom, #444, #222);
+    border-radius: 50%;
+    transform: scale(0.9);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5),
+                inset 0 4px 4px rgba(255, 255, 255, 0.2),
+                inset 0 -4px 4px rgba(255, 255, 255, 0.2);
+    transition: 0.5s;
+}
+
+.darkmode-btn.active {
+    background: #fff;
+    box-shadow: inset 0 2px 60px rgba(0, 0, 0, 0.1),
+                inset 0 2px 8px rgba(0, 0, 0, 0.1),
+                inset 0 -4px 4px rgba(0, 0, 0, 0.05);
+}
+
+.darkmode-btn.active .darkmode-item {
+    left: 16px;
+    background: linear-gradient(to bottom, #eaeaea, #f9f9f9);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1),
+                inset 0 4px 4px rgba(255, 255, 255, 1),
+                inset 0 -4px 4px rgba(255, 255, 255, 1);
+}
+
+.dark-mode {
+    background-color: #18191A;
+    color: #fff;
+}
+
+.text-white {
+    color: #fff !important;
+}
+
+.background-dark {
+    background-color: #3E4042 !important;
+}
+
+.background-dark-input {
+    background-color: #74777a;
+}
+
+.border-dark {
+    border-color: #444;
+}

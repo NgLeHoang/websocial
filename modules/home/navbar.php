@@ -37,6 +37,7 @@
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="?module=users&action=profile&name=<?=$userData['username']?>">My Profile</a></li>
                     <li><a class="dropdown-item" href="?module=users&action=editprofile">Account Settings</a></li>
+                    <li class="ms-3 d-flex align-items-center">Dark mode<button class="ms-2 dropdown-item darkmode-btn"><i class="darkmode-item"></i></button></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
